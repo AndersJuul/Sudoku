@@ -10,16 +10,24 @@ namespace SudokuSolver
         private static void Main(string[] args)
         {
             // Choose size of the sudoku square
-            const int size = 4;
-
-            var recursionDepth = 0;
-            // Get all the solutions
-            var solutions = GetSolutions(size, new int[size, size], recursionDepth).ToArray();
-
-            // Loop over all solutions, print them...
-            foreach (var solution in solutions)
+            for (int size = 0; size < 9; size++)
             {
-                PrintSolution(size, solution, "Solution:", recursionDepth);
+                Console.WriteLine("Size        : " + size);
+
+                var start = DateTime.Now;
+                var recursionDepth = 0;
+                // Get all the solutions
+                var solutions = GetSolutions(size, new int[size, size], recursionDepth).ToArray();
+                //Console.WriteLine();
+
+                Console.WriteLine("Solutions   : " + solutions.Length);
+                Console.WriteLine("Duration (s): " +DateTime.Now.Subtract(start).TotalSeconds);
+                // Loop over all solutions, print them...
+                //foreach (var solution in solutions)
+                //{
+                //    PrintSolution(size, solution, "Solution:", recursionDepth);
+                //}
+
             }
         }
 
@@ -49,7 +57,7 @@ namespace SudokuSolver
              * recursively. 
              */
 
-            PrintSolution(size, array, "Attempt:",recursionDepth);
+            //PrintSolution(size, array, "Attempt:",recursionDepth);
 
             // Find first blank. If no blanks found we are done (returning).
             var blank = GetBlank(array, size);
@@ -59,13 +67,13 @@ namespace SudokuSolver
                 yield break;
             }
 
-            Console.WriteLine(new string(' ',recursionDepth)+$"Found blank at {blank.Value.X},{blank.Value.Y}");
+            //Console.WriteLine(new string(' ',recursionDepth)+$"Found blank at {blank.Value.X},{blank.Value.Y}");
 
             // Get all the possible insertions for this position...
             var legalInsertions = GetLegalInsertions(array, size, blank.Value).ToArray();
 
             // Print the legals
-            Console.WriteLine(new string(' ', recursionDepth)+"Legals: " + string.Join(",", legalInsertions.Select(x => x.ToString())));
+            //Console.WriteLine(new string(' ', recursionDepth)+"Legals: " + string.Join(",", legalInsertions.Select(x => x.ToString())));
 
             // ... and try them one by one. For each possible new array, call recursively.
             foreach (var legalInsertion in legalInsertions)
@@ -77,7 +85,13 @@ namespace SudokuSolver
 
                 // Return all (if any) solutions found with this new insertion
                 var subSolutions = GetSolutions(size, workingCopy, recursionDepth+1).ToArray();
-                foreach (var subSolution in subSolutions) yield return subSolution;
+                //foreach (var subSolution in subSolutions) yield return subSolution;
+                var firstOrDefault = subSolutions.FirstOrDefault();
+                if (firstOrDefault != null)
+                {
+                    yield return firstOrDefault;
+                    yield break;
+                }
             }
         }
 
